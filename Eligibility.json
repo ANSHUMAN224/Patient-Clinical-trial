@@ -1,0 +1,11 @@
+{
+    "patientId": "string",
+    "eligibleTrials": [
+      {
+        "trialId": "string",
+        "trialName": "string",
+        "eligibilityCriteriaMet": ["string"]
+      }
+    ]
+  }
+  
