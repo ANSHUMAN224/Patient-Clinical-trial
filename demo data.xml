@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<medical_records>
+    <patient>
+        <age>45</age>
+        <gender>Male</gender>
+        <diagnosis>Hypertension</diagnosis>
+        <lab_results>
+            <result>
+                <test>Blood Pressure</test>
+                <value>140/90</value>
+                <unit>mmHg</unit>
+            </result>
+            <result>
+                <test>Cholesterol</test>
+                <value>220</value>
+                <unit>mg/dL</unit>
+            </result>
+        </lab_results>
+    </patient>
+    
+    <patient>
+        <age>60</age>
+        <gender>Female</gender>
+        <diagnosis>Diabetes</diagnosis>
+        <lab_results>
+            <result>
+                <test>Blood Sugar</test>
+                <value>180</value>
+                <unit>mg/dL</unit>
+            </result>
+            <result>
+                <test>Hemoglobin A1c</test>
+                <value>7.5</value>
+                <unit>%</unit>
+            </result>
+        </lab_results>
+    </patient>
+    
+    <patient>
+        <age>38</age>
+        <gender>Female</gender>
+        <diagnosis>Asthma</diagnosis>
+        <lab_results>
+            <result>
+                <test>Peak Flow</test>
+                <value>350</value>
+                <unit>L/min</unit>
+            </result>
+            <result>
+                <test>Oxygen Saturation</test>
+                <value>98</value>
+                <unit>%</unit>
+            </result>
+        </lab_results>
+    </patient>
+</medical_records>
