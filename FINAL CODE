@@ -1,0 +1,118 @@
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+import xml.etree.ElementTree as ET
+
+# Function to load patient data
+def load_patient_data(file_path):
+    tree = ET.parse(file_path)  # Use file_path parameter to load XML
+    root = tree.getroot()
+    patients = []
+    
+    # Extract necessary fields
+    for patient in root.findall('patient'):
+        age = int(patient.find('age').text)
+        gender = patient.find('gender').text
+        diagnosis = patient.find('diagnosis').text
+        lab_results = []
+
+        # Extract lab results
+        for result in patient.find('lab_results').findall('result'):
+            lab_results.append({
+                'test': result.find('test').text,
+                'value': result.find('value').text,
+                'unit': result.find('unit').text
+            })
+        
+        patients.append({
+            'age': age,
+            'gender': gender,
+            'diagnosis': diagnosis,
+            'lab_results': lab_results
+        })
+    
+    return patients  # Return the list of patients
+
+# Function to scrape clinical trials
+def scrape_clinical_trials():
+    # URL of the website to scrape (can replace with actual trials page)
+    url = 'https://clinicaltrials.gov'
+    
+    # Send a GET request to the website
+    response = requests.get(url)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the HTML content of the page
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Placeholder: Extract clinical trial data (mock data for now)
+        trials = [{'id': 'trial1', 'name': 'Hypertension Study', 'criteria': {'age_min': 18, 'exclude_diagnosis': 'Diabetes'}}]
+        return trials  # Return trials (mock data for demo)
+    else:
+        print(f"Failed to retrieve the website. Status code: {response.status_code}")
+        return []
+
+# Function to check eligibility criteria
+def check_eligibility(patient, trial):
+    # Check if patient meets the eligibility criteria of the trial
+    criteria_met = []
+    if patient['age'] >= trial['criteria']['age_min'] and patient['diagnosis'] != trial['criteria']['exclude_diagnosis']:
+        criteria_met.append('age and diagnosis criteria met')
+    
+    return criteria_met if criteria_met else None
+
+# Main matching logic
+def match_patients_to_trials(patients, trials):
+    output = []
+    for patient in patients:
+        eligible_trials = []
+        for trial in trials:
+            criteria_met = check_eligibility(patient, trial)
+            if criteria_met:
+                eligible_trials.append({
+                    "trialId": trial['id'],
+                    "trialName": trial['name'],
+                    "eligibilityCriteriaMet": criteria_met
+                })
+        output.append({
+            "patientId": id(patient),  # Using id as a unique patient identifier for simplicity
+            "eligibleTrials": eligible_trials
+        })
+    return output
+
+# Function to write output to Excel
+def write_output_to_excel(data, output_file):
+    # Convert the data into a DataFrame
+    rows = []
+    for patient in data:
+        for trial in patient['eligibleTrials']:
+            rows.append({
+                'PatientID': patient['patientId'],
+                'TrialID': trial['trialId'],
+                'TrialName': trial['trialName'],
+                'EligibilityCriteriaMet': ', '.join(trial['eligibilityCriteriaMet'])
+            })
+    
+    df = pd.DataFrame(rows)
+    
+    # Write the DataFrame to an Excel file
+    df.to_excel(output_file, index=False)
+    print(f"Data written to {output_file}")
+
+# Example main function
+def main():
+    # Load patient data from XML
+    patients = load_patient_data('data.xml')
+    
+    # Scrape clinical trials (mocked)
+    trials = scrape_clinical_trials()
+    
+    # Match patients to eligible trials
+    eligible_matches = match_patients_to_trials(patients, trials)
+    
+    # Write eligible matches to Excel
+    write_output_to_excel(eligible_matches, 'eligible_trials.xlsx')
+
+if __name__ == "__main__":
+    main()
